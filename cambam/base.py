@@ -1,6 +1,8 @@
 from itertools import count
 import xml.etree.ElementTree as et
 
+from .matrix import Matrix
+
 class Color(object):
 
     def __init__(self, r, g, b):
@@ -22,18 +24,6 @@ class Point(object):
 
     def __str__(self):
         return ",".join(str(c) for c in self.coords)
-
-
-class Matrix(object):
-
-    def __init__(self, m):
-        self.m = m
-
-
-    def __str__(self):
-        if self.m is None:
-            return "Identity"
-        raise NotImplementedError
 
 
 class Object(object):
@@ -70,13 +60,13 @@ class Transformable(Object):
 
     def __init__(self, *a, **k):
         super(Transformable, self).__init__(*a, **k)
-        self.matrix = None
+        self.matrix = Matrix()
 
 
     def add_details(self, tag):
         super(Transformable, self).add_details(tag)
         mat = et.Element("mat")
-        mat.attrib["m"] = str(Matrix(self.matrix))
+        mat.attrib["m"] = str(self.matrix)
         tag.append(mat)
 
 
