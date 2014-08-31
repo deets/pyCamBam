@@ -2,6 +2,8 @@ from itertools import count
 import xml.etree.ElementTree as et
 
 from .matrix import Matrix
+from .stl import StlReader
+
 
 class Color(object):
 
@@ -98,19 +100,51 @@ class Circle(Identifiable, Transformable, Modifiable):
         tag.attrib["d"] = str(self.d)
 
 
+class Surface(Identifiable, Transformable, Modifiable):
+
+    TAG = "surface"
+
+    def __init__(self, filename, *a, **k):
+        super(Surface, self).__init__(*a, **k)
+        self._faces = StlReader.read(filename)
+
+
+    def add_details(self, tag):
+        super(Surface, self).add_details(tag)
+        vertices = []
+        faces = []
+        for i, stl_face in enumerate(self._faces):
+            vertices.extend(stl_face)
+            faces.append((i*3, i*3 + 1, i*3 + 2))
+
+        verts = et.Element("verts")
+        tag.append(verts)
+
+        for vertex in vertices:
+            v = et.Element("v")
+            v.text = ",".join(str(c) for c in vertex)
+            verts.append(v)
+
+        faces_tag = et.Element("faces")
+        tag.append(faces_tag)
+        for face in faces:
+            f = et.Element("f")
+            f.text = ",".join(str(c) for c in face)
+            faces_tag.append(f)
+
+
 class Layer(Modifiable):
 
     TAG = "layer"
 
-    LAYER_COUNT = count()
-
-    def __init__(self, name=None, *a, **k):
+    def __init__(self, name=None, layer_count=None, id_gen=None, *a, **k):
         super(Layer, self).__init__(*a, **k)
         if name is None:
-            name = "layer_%i" % self.LAYER_COUNT.next()
+            name = "layer_%i" % layer_count.next()
         self.name = name
         self.color = Color(255, 255, 255)
         self._objects = []
+        self._id_gen = id_gen
 
 
     def add_details(self, tag):
@@ -128,6 +162,9 @@ class Layer(Modifiable):
     def add_circle(self, d, c):
         self._objects.append(Circle(d=d, c=c, id_gen=self._id_gen))
 
+
+    def add_surface(self, filename):
+        self._objects.append(Surface(filename, id_gen=self._id_gen))
 
 
 class CamBam(object):
@@ -159,3 +196,7 @@ class CamBam(object):
 
     def add_circle(self, d, c):
         self.current_layer.add_circle(d=d, c=c)
+
+
+    def add_surface(self, filename):
+        self.current_layer.add_surface(filename)
