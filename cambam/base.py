@@ -42,6 +42,19 @@ class Object(object):
         pass
 
 
+class Identifiable(Object):
+
+
+    def __init__(self, id_gen, *a, **k):
+        super(Identifiable, self).__init__(*a, **k)
+        self.id = id_gen.next()
+
+
+    def add_details(self, tag):
+        super(Identifiable, self).add_details(tag)
+        tag.attrib["id"] = str(self.id)
+
+
 class Modifiable(Object):
 
     def __init__(self, *a, **k):
@@ -70,23 +83,19 @@ class Transformable(Object):
         tag.append(mat)
 
 
-class Circle(Transformable, Modifiable):
+class Circle(Identifiable, Transformable, Modifiable):
 
     TAG = "circle"
-
-    CIRCLE_ID_GEN = count(1)
 
     def __init__(self, d, c, *a, **k):
         super(Circle, self).__init__(*a, **k)
         self.d, self.c = d, Point(c)
-        self.id = self.CIRCLE_ID_GEN.next()
 
 
     def add_details(self, tag):
         super(Circle, self).add_details(tag)
         tag.attrib["c"] = str(self.c)
         tag.attrib["d"] = str(self.d)
-        tag.attrib["id"] = str(self.id)
 
 
 class Layer(Modifiable):
@@ -117,7 +126,8 @@ class Layer(Modifiable):
 
 
     def add_circle(self, d, c):
-        self._objects.append(Circle(d=d, c=c))
+        self._objects.append(Circle(d=d, c=c, id_gen=self._id_gen))
+
 
 
 class CamBam(object):
@@ -126,7 +136,9 @@ class CamBam(object):
 
     def __init__(self, name):
         self.name = name
-        self.current_layer = Layer()
+        self._layer_count = count()
+        self._object_count = count(1)
+        self.current_layer = Layer(layer_count=self._layer_count, id_gen=self._object_count)
         self._layers = [self.current_layer]
 
 
