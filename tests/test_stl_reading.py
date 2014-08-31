@@ -1,20 +1,10 @@
 #
-import os
-import unittest
 from cambam.stl import StlReader
 
-class TestStlReading(unittest.TestCase):
+from .base import TestBase
 
 
-    @classmethod
-    def datafilename(cls, name):
-        fname = os.path.join(
-            os.path.dirname(__file__),
-            "data",
-            name,
-            )
-        assert os.path.exists(fname)
-        return fname
+class TestStlReading(TestBase):
 
 
     def test_ascii_stl_reading(self):

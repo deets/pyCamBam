@@ -1,10 +1,11 @@
 import xml.etree.ElementTree as et
 from cStringIO import StringIO
-import unittest
 
 from cambam import CamBam
 
-class TestCamBam(unittest.TestCase):
+from .base import TestBase
+
+class TestCamBam(TestBase):
 
 
     def assertXMLEqual(self, expected, actual):
