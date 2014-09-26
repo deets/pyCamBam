@@ -1,4 +1,5 @@
-from cambam import Matrix
+from math import pi
+from cambam import Matrix, quaternion
 
 from unittest import TestCase
 
@@ -48,4 +49,24 @@ class TestMatrix(TestCase):
         self.assertEquals(
             "1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 10.0 0.0 0.0 1.0",
             str(m),
+            )
+
+
+    def test_vector_application(self):
+        m = Matrix()
+        m.translate(x=10.0)
+        self.assertEqual((10, 0, 0), m.apply((0, 0, 0)))
+
+
+    def test_rotation(self):
+        q = quaternion.rotation(pi/2, (0, 0, 1))
+        m = Matrix.from_quaternion(q)
+
+        def vector_equal(expected, actual, e=10e-14):
+            if not len(expected) == len(actual):
+                return False
+            return all(abs(a-b) <= e for a, b in zip(expected, actual))
+
+        self.assertTrue(
+            vector_equal((0, -1, 0), m.apply((1, 0, 0)))
             )

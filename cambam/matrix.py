@@ -1,3 +1,5 @@
+from math import cos, sin
+
 class Matrix(object):
 
     @classmethod
@@ -52,5 +54,43 @@ class Matrix(object):
 
 
     def __eq__(self, other):
+        # TODO: needs epsilon-comparison
         return self._identity == other._identity and \
           self._rowcols == other._rowcols
+
+
+    @classmethod
+    def from_quaternion(cls, q):
+        w, x, y, z = q
+        return cls([
+            [w**2+x**2-y**2-z**2, 2*x*y-2*w*z, 2*x*z+2*w*y, 0],
+            [2*x*y+2*w*z, w**2-x**2+y**2-z**2, 2*y*z+2*w*x, 0],
+            [2*x*z-2*w*y, 2*y*z-2*w*x, w**2-x**2-y**2+z**2, 0],
+            [0.0, 0.0, 0.0, 10.]])
+
+
+    def apply(self, v):
+        res = [0] * 4
+        vt = (v[0], v[1], v[2], 1.0) if len(v) == 3 else v
+        for i in xrange(4):
+            res[i] = sum(vt[j] * self._rowcols[j][i] for j in xrange(4))
+        return tuple(res[:len(v)])
+
+
+class quaternion(object):
+
+    def __init__(self, w, x, y, z):
+        self.w, self.x, self.y, self.z = w, x, y, z
+
+
+    @classmethod
+    def rotation(cls, angle, (dx, dy, dz)):
+        w  = cos(angle / 2)
+        x = dx * sin(angle / 2 )
+        y = dy * sin(angle / 2 )
+        z = dz * sin(angle / 2 )
+        return cls(w, x, y, z)
+
+
+    def __getitem__(self, index):
+        return [self.w, self.x, self.y, self.z][index]
