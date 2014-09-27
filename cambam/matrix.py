@@ -45,6 +45,18 @@ class Matrix(object):
         return self
 
 
+    def __mul__(self, other):
+        res = self.__class__()
+        mrc = self._rowcols
+        orc = other._rowcols
+        for i in xrange(4):
+            for j in xrange(4):
+                res[i][j] = sum(mrc[i][k] * orc[k][j] for k in xrange(4))
+
+        res._identity = False
+        return res
+
+
     def __str__(self):
         if self._identity:
             return "Identity"

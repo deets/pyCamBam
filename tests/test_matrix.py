@@ -76,3 +76,14 @@ class TestMatrix(TestCase):
         q = quaternion.rotation(pi/2, (0, 0, 1))
         m = Matrix.from_quaternion(q).normalized()
         self.assertEqual(0, m[0][0])
+
+
+    def test_outer_multiplication(self):
+        a = Matrix()
+        a.translate(x=10)
+        b = Matrix()
+        b.translate(y=20)
+        c = a * b
+        self.assertEqual([10.0, 0.0, 0, 1.0], a[3])
+        self.assertEqual([0.0, 20.0, 0, 1.0], b[3])
+        self.assertEqual([10.0, 20.0, 0, 1.0], c[3])
