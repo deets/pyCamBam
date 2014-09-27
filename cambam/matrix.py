@@ -1,5 +1,8 @@
 from math import cos, sin
 
+# used to compare floats
+EPSILON = 1E-15
+
 class Matrix(object):
 
     @classmethod
@@ -45,7 +48,7 @@ class Matrix(object):
     def __str__(self):
         if self._identity:
             return "Identity"
-        rc = self._rowcols
+        rc = self.normalized()._rowcols
         return " ".join(str(rc[i][j]) for i in xrange(4) for j in xrange(4))
 
 
@@ -75,6 +78,26 @@ class Matrix(object):
         for i in xrange(4):
             res[i] = sum(vt[j] * self._rowcols[j][i] for j in xrange(4))
         return tuple(res[:len(v)])
+
+
+    def __getitem__(self, index):
+        return self._rowcols[index]
+
+
+    def normalized(self):
+        """
+        Normalizes matrix-values to 0/1 if they are within the EPSILON range
+        """
+        res = self.__class__()
+        for i in xrange(4):
+            for j in xrange(4):
+                v = self[i][j]
+                if abs(v) <= EPSILON:
+                    v = 0.0
+                elif abs(1 - v) <= EPSILON:
+                    v = 1.0
+                res[i][j] = v
+        return res
 
 
 class quaternion(object):

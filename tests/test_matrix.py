@@ -70,3 +70,9 @@ class TestMatrix(TestCase):
         self.assertTrue(
             vector_equal((0, -1, 0), m.apply((1, 0, 0)))
             )
+
+
+    def test_normalization(self):
+        q = quaternion.rotation(pi/2, (0, 0, 1))
+        m = Matrix.from_quaternion(q).normalized()
+        self.assertEqual(0, m[0][0])
