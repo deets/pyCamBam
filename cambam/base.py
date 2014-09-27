@@ -1,7 +1,7 @@
 from itertools import count
 import xml.etree.ElementTree as et
 
-from .matrix import Matrix
+from .matrix import Matrix, quaternion
 from .stl import StlReader
 
 
@@ -88,6 +88,12 @@ class Transformable(Object):
     def translate(self, x=0, y=0, z=0):
         m = Matrix()
         m.translate(x=x, y=y, z=z)
+        self.matrix *= m
+
+
+    def rotate(self, angle, axis):
+        q = quaternion.rotation(angle, axis)
+        m = Matrix.from_quaternion(q)
         self.matrix *= m
 
 
