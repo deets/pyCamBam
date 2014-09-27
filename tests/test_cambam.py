@@ -118,3 +118,35 @@ class TestCamBam(TestBase):
         """,
         cb.tostring(),
         )
+
+
+    def test_transformable_translation(self):
+        cb = CamBam("stl-test")
+        surface = cb.add_surface(self.datafilename("ascii.stl"))
+        surface.translate(x=10)
+        self.assertXMLEqual(
+        """
+        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="stl-test">
+          <layers>
+            <layer name="layer_0" color="255,255,255">
+              <ModifcationCount>0</ModifcationCount>
+              <objects>
+                <surface id="1">
+                  <ModifcationCount>0</ModifcationCount>
+                  <mat m="1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 10.0 0.0 0.0 1.0"/>
+                  <verts>
+                   <v>20.0,0.0,13.0</v>
+                   <v>20.0,-1.3,14.0</v>
+                   <v>20.0,-3.0,2.0</v>
+                  </verts>
+                  <faces>
+                   <f>0,1,2</f>
+                  </faces>
+               </surface>
+              </objects>
+            </layer>
+          </layers>
+        </CADFile>
+        """,
+        cb.tostring(),
+        )

@@ -85,6 +85,12 @@ class Transformable(Object):
         tag.append(mat)
 
 
+    def translate(self, x=0, y=0, z=0):
+        m = Matrix()
+        m.translate(x=x, y=y, z=z)
+        self.matrix *= m
+
+
 class Circle(Identifiable, Transformable, Modifiable):
 
     TAG = "circle"
@@ -164,7 +170,9 @@ class Layer(Modifiable):
 
 
     def add_surface(self, filename):
-        self._objects.append(Surface(filename, id_gen=self._id_gen))
+        surface = Surface(filename, id_gen=self._id_gen)
+        self._objects.append(surface)
+        return surface
 
 
 class CamBam(object):
@@ -199,4 +207,4 @@ class CamBam(object):
 
 
     def add_surface(self, filename):
-        self.current_layer.add_surface(filename)
+        return self.current_layer.add_surface(filename)
