@@ -89,12 +89,14 @@ class Transformable(Object):
         m = Matrix()
         m.translate(x=x, y=y, z=z)
         self.matrix *= m
+        return self
 
 
     def rotate(self, angle, axis):
         q = quaternion.rotation(angle, axis)
         m = Matrix.from_quaternion(q)
         self.matrix *= m
+        return self
 
 
 class Circle(Identifiable, Transformable, Modifiable):
