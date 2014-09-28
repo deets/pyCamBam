@@ -19,3 +19,15 @@ class BBox(object):
     @property
     def height(self):
         return self.pmax[2] - self.pmin[2]
+
+
+    def pad(self, padding=None, x=0, y=0, z=0):
+        if padding is not None:
+            xpadding = ypadding = zpadding = padding
+        else:
+            xpadding, ypadding, zpadding = x, y, z
+
+        return BBox(
+            (self.pmin[0] - xpadding, self.pmin[1] - ypadding, self.pmin[2] - zpadding),
+            (self.pmax[0] + xpadding, self.pmax[1] + ypadding, self.pmax[2] + zpadding),
+            )
