@@ -10,6 +10,7 @@ class Color(object):
     def __init__(self, r, g, b):
         self.r, self.g, self.b = r, g, b
 
+
     def __str__(self):
         return "%i,%i,%i" % (self.r, self.g, self.b)
 
@@ -183,12 +184,36 @@ class Layer(Modifiable):
         return surface
 
 
+class Stock(Object):
+
+    TAG = "Stock"
+
+    def __init__(self):
+        self.pmin = (0, 0, 0)
+        self.pmax = (100, 100, 10)
+        self.color = Color(255, 165, 0)
+
+
+    def add_details(self, tag):
+        pminel = et.Element("PMin")
+        pminel.text = ",".join(str(p) for p in self.pmin)
+        pmaxel = et.Element("PMax")
+        pmaxel.text = ",".join(str(p) for p in self.pmax)
+        colorel = et.Element("Color")
+        colorel.text = str(self.color)
+        tag.append(pminel)
+        tag.append(pmaxel)
+        tag.append(colorel)
+
+
 class CamBam(object):
 
     VERSION = "0.9.8.0"
 
-    def __init__(self, name):
+    def __init__(self, name, fast_plunge_height=-1):
         self.name = name
+        self.fast_plunge_height = fast_plunge_height
+        self.stock = Stock()
         self._layer_count = count()
         self._object_count = count(1)
         self.current_layer = Layer(layer_count=self._layer_count, id_gen=self._object_count)
@@ -207,6 +232,7 @@ class CamBam(object):
         for layer in self._layers:
             layer.serialize(layers)
         cadfile.append(layers)
+        cadfile.append(self._machining_options())
         return et.tostring(cadfile)
 
 
@@ -216,3 +242,20 @@ class CamBam(object):
 
     def add_surface(self, filename):
         return self.current_layer.add_surface(filename)
+
+
+    def _machining_options(self):
+        moel = et.Element("MachiningOptions")
+        fph = et.Element("FastPlungeHeight")
+        fph.text = str(self.fast_plunge_height)
+        tph = et.Element("ToolProfile")
+        tph.text = "Unspecified"
+        mo = et.Element("MachiningOrigin")
+        mo.text = "0,0"
+
+        moel.append(fph)
+        self.stock.serialize(moel)
+        moel.append(tph)
+        moel.append(mo)
+
+        return moel

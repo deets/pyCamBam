@@ -63,9 +63,24 @@ class TestCamBam(TestBase):
         cb.write(out)
         content = out.getvalue()
         self.assertXMLEqual(
-            """<CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="the-name">
-        <layers><layer name="%(layername)s" color="255,255,255"><ModifcationCount>0</ModifcationCount><objects/></layer></layers>
-            </CADFile>
+            """
+        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="the-name">
+          <layers>
+            <layer name="%(layername)s" color="255,255,255"><ModifcationCount>0</ModifcationCount>
+              <objects/>
+            </layer>
+          </layers>
+         <MachiningOptions>
+          <FastPlungeHeight>-1</FastPlungeHeight>
+          <Stock>
+            <PMin>0,0,0</PMin>
+            <PMax>100,100,10</PMax>
+            <Color>255,165,0</Color>
+          </Stock>
+          <ToolProfile>Unspecified</ToolProfile>
+          <MachiningOrigin>0,0</MachiningOrigin>
+         </MachiningOptions>
+        </CADFile>
         """ % dict(layername=cb.current_layer.name),
             content,
             )
