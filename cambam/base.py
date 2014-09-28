@@ -122,6 +122,7 @@ class Surface(Identifiable, Transformable, Modifiable):
     def __init__(self, filename, *a, **k):
         super(Surface, self).__init__(*a, **k)
         self._faces = StlReader.read(filename)
+        self._bbox = None
 
 
     def add_details(self, tag):
@@ -146,6 +147,31 @@ class Surface(Identifiable, Transformable, Modifiable):
             f = et.Element("f")
             f.text = ",".join(str(c) for c in face)
             faces_tag.append(f)
+
+
+    @property
+    def bbox(self):
+        if self._bbox is None:
+            minx = min(vertex[0]
+                       for face in self._faces
+                       for vertex in face)
+            miny = min(vertex[1]
+                       for face in self._faces
+                       for vertex in face)
+            minz = min(vertex[2]
+                       for face in self._faces
+                       for vertex in face)
+            maxx = max(vertex[0]
+                       for face in self._faces
+                       for vertex in face)
+            maxy = max(vertex[1]
+                       for face in self._faces
+                       for vertex in face)
+            maxz = max(vertex[2]
+                       for face in self._faces
+                       for vertex in face)
+            self._bbox = ((minx, miny, minz), (maxx, maxy, maxz))
+        return self._bbox
 
 
 class Layer(Modifiable):

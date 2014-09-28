@@ -161,3 +161,13 @@ class TestCamBam(TestBase):
         cb.tostring(),
         "layers/layer/objects/surface/mat",
         )
+
+
+    def test_surfaces_bbox(self):
+        cb = CamBam("stl-test")
+        surface = cb.add_surface(self.datafilename("sphere.stl"))
+        bbox = surface.bbox
+        self.assertEqual(
+            ((36.011, 35.3559, 5.0), (74.8331, 74.6439, 44.9999)),
+            bbox,
+            )
