@@ -9,7 +9,7 @@ from .base import TestBase
 class TestCamBam(TestBase):
 
 
-    def assertXMLEqual(self, expected, actual):
+    def assertXMLEqual(self, expected, actual, path=None):
 
         def textcompare(expected, actual):
             expected = "" if expected is None else expected
@@ -29,6 +29,10 @@ class TestCamBam(TestBase):
 
         expected = toxml(expected)
         actual = toxml(actual)
+        if path is not None:
+            actual = actual.find(path)
+            self.assertTrue(actual is not None, "No elements found for path %s" % path)
+
         if not expected.tag == actual.tag:
             self.assertTrue(False, "<%s> != <%s>" % (expected.tag, actual.tag))
 
@@ -72,21 +76,13 @@ class TestCamBam(TestBase):
         cb.add_circle(d=5.0, c=[10.0, 11.0, 12.0])
         self.assertXMLEqual(
         """
-        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="circle-test">
-          <layers>
-            <layer name="layer_0" color="255,255,255">
-              <ModifcationCount>0</ModifcationCount>
-              <objects>
-                <circle id="1" d="5.0" c="10.0,11.0,12.0">
-                  <ModifcationCount>0</ModifcationCount>
-                  <mat m="Identity"/>
-               </circle>
-              </objects>
-            </layer>
-          </layers>
-        </CADFile>
+        <circle id="1" d="5.0" c="10.0,11.0,12.0">
+          <ModifcationCount>0</ModifcationCount>
+          <mat m="Identity"/>
+        </circle>
         """,
         cb.tostring(),
+        "layers/layer/objects/circle",
         )
 
 
@@ -95,29 +91,21 @@ class TestCamBam(TestBase):
         cb.add_surface(self.datafilename("ascii.stl"))
         self.assertXMLEqual(
         """
-        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="stl-test">
-          <layers>
-            <layer name="layer_0" color="255,255,255">
-              <ModifcationCount>0</ModifcationCount>
-              <objects>
-                <surface id="1">
-                  <ModifcationCount>0</ModifcationCount>
-                  <mat m="Identity"/>
-                  <verts>
-                   <v>20.0,0.0,13.0</v>
-                   <v>20.0,-1.3,14.0</v>
-                   <v>20.0,-3.0,2.0</v>
-                  </verts>
-                  <faces>
-                   <f>0,1,2</f>
-                  </faces>
-               </surface>
-              </objects>
-            </layer>
-          </layers>
-        </CADFile>
+        <surface id="1">
+         <ModifcationCount>0</ModifcationCount>
+         <mat m="Identity"/>
+         <verts>
+          <v>20.0,0.0,13.0</v>
+          <v>20.0,-1.3,14.0</v>
+          <v>20.0,-3.0,2.0</v>
+         </verts>
+         <faces>
+          <f>0,1,2</f>
+         </faces>
+        </surface>
         """,
         cb.tostring(),
+        "layers/layer/objects/surface",
         )
 
 
@@ -127,29 +115,10 @@ class TestCamBam(TestBase):
         surface.translate(x=10)
         self.assertXMLEqual(
         """
-        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="stl-test">
-          <layers>
-            <layer name="layer_0" color="255,255,255">
-              <ModifcationCount>0</ModifcationCount>
-              <objects>
-                <surface id="1">
-                  <ModifcationCount>0</ModifcationCount>
-                  <mat m="1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 10.0 0.0 0.0 1.0"/>
-                  <verts>
-                   <v>20.0,0.0,13.0</v>
-                   <v>20.0,-1.3,14.0</v>
-                   <v>20.0,-3.0,2.0</v>
-                  </verts>
-                  <faces>
-                   <f>0,1,2</f>
-                  </faces>
-               </surface>
-              </objects>
-            </layer>
-          </layers>
-        </CADFile>
+        <mat m="1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 10.0 0.0 0.0 1.0"/>
         """,
         cb.tostring(),
+        "layers/layer/objects/surface/mat",
         )
 
 
@@ -159,27 +128,21 @@ class TestCamBam(TestBase):
         surface.rotate(pi/2, (0, 0, 1))
         self.assertXMLEqual(
         """
-        <CADFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="0.9.8.0" Name="stl-test">
-          <layers>
-            <layer name="layer_0" color="255,255,255">
-              <ModifcationCount>0</ModifcationCount>
-              <objects>
-                <surface id="1">
-                  <ModifcationCount>0</ModifcationCount>
-                  <mat m="0.0 -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0"/>
-                  <verts>
-                   <v>20.0,0.0,13.0</v>
-                   <v>20.0,-1.3,14.0</v>
-                   <v>20.0,-3.0,2.0</v>
-                  </verts>
-                  <faces>
-                   <f>0,1,2</f>
-                  </faces>
-               </surface>
-              </objects>
-            </layer>
-          </layers>
-        </CADFile>
+        <mat m="0.0 -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0"/>
         """,
         cb.tostring(),
+        "layers/layer/objects/surface/mat",
+        )
+
+
+    def test_transformation_chaining(self):
+        cb = CamBam("stl-test")
+        surface = cb.add_surface(self.datafilename("ascii.stl"))
+        surface.rotate(pi/2, (0, 0, 1)).translate(x=10).translate(y=20)
+        self.assertXMLEqual(
+        """
+        <mat m="0.0 -1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 10.0 20.0 0.0 1.0"/>
+        """,
+        cb.tostring(),
+        "layers/layer/objects/surface/mat",
         )
