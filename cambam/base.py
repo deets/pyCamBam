@@ -3,6 +3,7 @@ import xml.etree.ElementTree as et
 
 from .matrix import Matrix, quaternion
 from .stl import StlReader
+from .util import BBox
 
 
 class Color(object):
@@ -170,7 +171,7 @@ class Surface(Identifiable, Transformable, Modifiable):
             maxz = max(vertex[2]
                        for face in self._faces
                        for vertex in face)
-            self._bbox = ((minx, miny, minz), (maxx, maxy, maxz))
+            self._bbox = BBox((minx, miny, minz), (maxx, maxy, maxz))
         return self._bbox
 
 

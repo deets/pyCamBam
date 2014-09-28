@@ -31,3 +31,7 @@ class BBox(object):
             (self.pmin[0] - xpadding, self.pmin[1] - ypadding, self.pmin[2] - zpadding),
             (self.pmax[0] + xpadding, self.pmax[1] + ypadding, self.pmax[2] + zpadding),
             )
+
+
+    def __getitem__(self, index):
+        return (self.pmin, self.pmax)[index]

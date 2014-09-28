@@ -27,3 +27,9 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(20, bbox.width)
         self.assertEqual(40, bbox.length)
         self.assertEqual(70, bbox.height)
+
+
+    def test_bbox_tuple_like_access(self):
+        bbox = BBox((0, 0, 0), (10, 20, 30))
+        self.assertEqual((0, 0, 0), bbox[0])
+        self.assertEqual((10, 20, 30), bbox[1])
