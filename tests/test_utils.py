@@ -33,3 +33,8 @@ class TestUtils(unittest.TestCase):
         bbox = BBox((0, 0, 0), (10, 20, 30))
         self.assertEqual((0, 0, 0), bbox[0])
         self.assertEqual((10, 20, 30), bbox[1])
+
+
+    def test_bbox_center(self):
+        bbox = BBox((0, 0, 0), (5, 5, 5))
+        self.assertEqual((2.5, 2.5, 2.5), bbox.center)

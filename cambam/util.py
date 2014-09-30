@@ -21,6 +21,15 @@ class BBox(object):
         return self.pmax[2] - self.pmin[2]
 
 
+    @property
+    def center(self):
+        return (
+            (self.pmin[0] + self.pmax[0]) / 2.0,
+            (self.pmin[1] + self.pmax[1]) / 2.0,
+            (self.pmin[2] + self.pmax[2]) / 2.0,
+            )
+
+
     def pad(self, padding=None, x=0, y=0, z=0):
         if padding is not None:
             xpadding = ypadding = zpadding = padding
