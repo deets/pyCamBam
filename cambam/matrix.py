@@ -1,7 +1,6 @@
 from math import cos, sin
 
-# used to compare floats
-EPSILON = 1E-15
+from .util import EPSILON
 
 class Matrix(object):
 

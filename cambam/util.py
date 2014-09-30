@@ -1,3 +1,9 @@
+# used to compare floats
+EPSILON = 1E-15
+
+
+def veceq(a, b):
+    return all(abs(ac - bc) <= EPSILON for ac, bc in zip(a, b))
 
 
 class BBox(object):
@@ -44,3 +50,14 @@ class BBox(object):
 
     def __getitem__(self, index):
         return (self.pmin, self.pmax)[index]
+
+
+    def __repr__(self):
+        return "<%s %r %r>" % (
+            self.__class__.__name__,
+            self.pmin, self.pmax,
+            )
+
+
+    def __eq__(self, other):
+        return veceq(self.pmin, other.pmin) and veceq(self.pmax, other.pmax)
