@@ -1,5 +1,6 @@
 from math import sqrt, ceil
-from cambam import BBox, Matrix
+from .util import BBox
+from .base import Matrix
 
 
 def grid(bboxes):
